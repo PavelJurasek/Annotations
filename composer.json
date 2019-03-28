@@ -21,18 +21,23 @@
 		"email": "filip@prochazka.su",
 		"issues": "https://github.com/kdyby/annotations/issues"
 	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/paveljurasek/doctrinecache"
+		}
+	],
 	"require": {
 		"php": "^7.1",
-		"nette/di": "^2.4@dev",
-		"nette/utils": "^2.4@dev",
-		"doctrine/annotations": "~1.6",
-		"kdyby/doctrine-cache": "^2.6.1@dev"
+		"nette/di": "^3.0-RC2",
+		"nette/utils": "^3.0",
+		"doctrine/annotations": "^1.6",
+		"kdyby/doctrine-cache": "^3.0"
 	},
 	"require-dev": {
-		"nette/bootstrap": "^2.4.5@dev",
-		"nette/tester": "^2.0"
+		"nette/bootstrap": "^3.0",
+		"nette/tester": "^2.2"
 	},
-	"minimum-stability": "dev",
 	"conflict": {
 		"nette/caching": "<2.5.0",
 		"nette/finder": "<2.4.1",

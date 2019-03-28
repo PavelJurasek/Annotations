@@ -67,7 +67,7 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 	 */
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
-		$config = parent::getConfig($defaults, $expand);
+		$config = \Nette\DI\Config\Helpers::merge(parent::getConfig(), $defaults);
 
 		// ignoredAnnotations
 		$globalConfig = $this->compiler->getConfig();
@@ -76,7 +76,7 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 			$config = ConfigHelpers::merge($config, ['ignore' => $globalConfig['doctrine']['ignoredAnnotations']]);
 		}
 
-		return $this->compiler->getContainerBuilder()->expand($config);
+		return \Nette\DI\Helpers::expand($config, $this->getContainerBuilder()->parameters);
 	}
 
 	public function afterCompile(ClassTypeGenerator $class)
