@@ -20,25 +20,17 @@ use Kdyby\DoctrineCache\DI\Helpers;
 use Nette\DI\Config\Helpers as ConfigHelpers;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use Nette\Utils\Validators;
 
 class AnnotationsExtension extends \Nette\DI\CompilerExtension
 {
 
-	/** @var array */
-	public $defaults = [
-		'ignore' => [
-			'persistent',
-			'serializationVersion',
-		],
-		'cache' => 'default',
-		'debug' => '%debugMode%',
-	];
-
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig();
 
 		$reflectionReader = $builder->addDefinition($this->prefix('reflectionReader'))
 			->setType(AnnotationReader::class)
@@ -62,15 +54,9 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 		AnnotationRegistry::registerUniqueLoader('class_exists');
 	}
 
-	/**
-	 * @param array<mixed> $defaults
-	 * @param bool $expand
-	 * @return array<mixed>
-	 */
-	public function getConfig(?array $defaults = NULL, ?bool $expand = TRUE): array
+	public function getConfig(): array
 	{
-		/** @var array $config */
-		$config = \Nette\DI\Config\Helpers::merge(parent::getConfig(), $defaults);
+		$config = (array) parent::getConfig();
 
 		// ignoredAnnotations
 		$globalConfig = $this->compiler->getConfig();
@@ -93,6 +79,18 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 		$originalInitialize = (string) $init->getBody();
 		$init->setBody('?::registerUniqueLoader("class_exists");' . "\n", [new PhpLiteral(AnnotationRegistry::class)]);
 		$init->addBody($originalInitialize);
+	}
+
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'ignore' => Expect::listOf('string')->default([
+				'persistent',
+				'serializationVersion',
+			]),
+			'cache' => Expect::string('default'),
+			'debug' => Expect::bool('%debugMode%'),
+		]);
 	}
 
 }

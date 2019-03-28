@@ -2,4 +2,4 @@ annotations:
 	ignore:
 		- dropTheBass
 
-	debugMode: false
+	debug: false
