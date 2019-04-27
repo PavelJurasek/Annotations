@@ -27,6 +27,14 @@ use Nette\Utils\Validators;
 class AnnotationsExtension extends \Nette\DI\CompilerExtension
 {
 
+	/** @var bool */
+	private $debugMode;
+
+	public function __construct(bool $debugMode = false)
+	{
+		$this->debugMode = $debugMode;
+	}
+
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -34,7 +42,7 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 
 		$reflectionReader = $builder->addDefinition($this->prefix('reflectionReader'))
 			->setType(AnnotationReader::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 
 		Validators::assertField($config, 'ignore', 'array');
 		foreach ($config['ignore'] as $annotationName) {
@@ -66,10 +74,6 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 			$config = ConfigHelpers::merge($config, ['ignore' => $globalConfig['doctrine']['ignoredAnnotations']]);
 		}
 
-		if (\array_key_exists('debugMode', $config)) {
-			$config['debug'] = $config['debugMode'];
-		}
-
 		return $config;
 	}
 
@@ -89,7 +93,7 @@ class AnnotationsExtension extends \Nette\DI\CompilerExtension
 				'serializationVersion',
 			]),
 			'cache' => Expect::string('default'),
-			'debug' => Expect::bool('%debugMode%'),
+			'debug' => Expect::bool($this->debugMode),
 		]);
 	}
 
